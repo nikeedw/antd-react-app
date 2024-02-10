@@ -1,6 +1,9 @@
 import { Button, Checkbox, Form, Input } from 'antd';
 import { FC } from 'react'
 import { rules } from '../utils/rules';
+import { useDispatch } from 'react-redux';
+import { AuthActionCreators } from '../store/reducers/auth/action-creators';
+import { useTypedSelector } from '../hooks/useTypedSelector';
 
 type FieldType = {
 	username?: string;
@@ -9,8 +12,11 @@ type FieldType = {
 };
 
 const LoginForm: FC = () => {
+	const dispatch = useDispatch();
+	const {error, isLoading} = useTypedSelector(state => state.auth)
+
 	const onFinish = () => {
-		console.log('Success:');
+		dispatch(AuthActionCreators.login('user', '123'));
 	};
 	
 	const onFinishFailed = () => {
@@ -28,6 +34,11 @@ const LoginForm: FC = () => {
 			onFinish={onFinish}
 			onFinishFailed={onFinishFailed}
 		>
+			{error &&
+				<div style={{color: 'red'}}>
+					{error}
+				</div>
+			}
 			<Form.Item<FieldType>
 				label="Username"
 				name="username"
@@ -53,8 +64,8 @@ const LoginForm: FC = () => {
 			</Form.Item>
 
 			<Form.Item wrapperCol={{ offset: 8, span: 16 }}>
-				<Button type="primary" htmlType="submit">
-					Submit
+				<Button type="primary" htmlType="submit" loading={isLoading}>
+					Login
 				</Button>
 			</Form.Item>
 		</Form>
