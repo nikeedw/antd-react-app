@@ -1,9 +1,10 @@
 import { Button, Checkbox, Form, Input } from 'antd';
-import { FC } from 'react'
+import { FC, useState } from 'react'
 import { rules } from '../utils/rules';
 import { useDispatch } from 'react-redux';
 import { AuthActionCreators } from '../store/reducers/auth/action-creators';
 import { useTypedSelector } from '../hooks/useTypedSelector';
+import { IUser } from '../models/IUser';
 
 type FieldType = {
 	username?: string;
@@ -14,9 +15,11 @@ type FieldType = {
 const LoginForm: FC = () => {
 	const dispatch = useDispatch();
 	const {error, isLoading} = useTypedSelector(state => state.auth)
+	const [username, setUsername] = useState<string>('');
+	const [password, setPassword] = useState<string>('');
 
 	const onFinish = () => {
-		dispatch(AuthActionCreators.login('user', '123'));
+		dispatch(AuthActionCreators.login(username, password));
 	};
 	
 	const onFinishFailed = () => {
@@ -44,7 +47,10 @@ const LoginForm: FC = () => {
 				name="username"
 				rules={[rules.required('Please input your username!')]}
 			>
-				<Input />
+				<Input 
+					value={username} 
+					onChange={(e) => setUsername(e.target.value)} 
+				/>
 			</Form.Item>
 
 			<Form.Item<FieldType>
@@ -52,7 +58,10 @@ const LoginForm: FC = () => {
 				name="password"
 				rules={[rules.required('Please input your password!')]}
 			>
-				<Input.Password />
+				<Input.Password 
+					value={password} 
+					onChange={(e) => setPassword(e.target.value)} 
+				/>
 			</Form.Item>
 
 			<Form.Item<FieldType>
