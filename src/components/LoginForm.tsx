@@ -4,7 +4,6 @@ import { rules } from '../utils/rules';
 import { useDispatch } from 'react-redux';
 import { AuthActionCreators } from '../store/reducers/auth/action-creators';
 import { useTypedSelector } from '../hooks/useTypedSelector';
-import { IUser } from '../models/IUser';
 
 type FieldType = {
 	username?: string;
