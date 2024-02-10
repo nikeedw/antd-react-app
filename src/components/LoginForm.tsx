@@ -9,6 +9,13 @@ type FieldType = {
 };
 
 const LoginForm: FC = () => {
+	const onFinish = () => {
+		console.log('Success:');
+	};
+	
+	const onFinishFailed = () => {
+		console.log('Failed:');
+	};
 
 	return (
 		<Form
@@ -18,6 +25,8 @@ const LoginForm: FC = () => {
 			style={{ maxWidth: 600 }}
 			initialValues={{ remember: true }}
 			autoComplete="off"
+			onFinish={onFinish}
+			onFinishFailed={onFinishFailed}
 		>
 			<Form.Item<FieldType>
 				label="Username"
