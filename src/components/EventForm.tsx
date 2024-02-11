@@ -1,52 +1,83 @@
-import { FC } from 'react'
-import { Form, Input, Space, DatePicker, Button, Select } from 'antd';
+import { FC, useState } from 'react'
+import { Form, Input, DatePicker, Button, Select } from 'antd';
 import { rules } from '../utils/rules';
+import { IUser } from '../models/IUser';
+import { IEvent } from '../models/IEvent';
+import { Moment } from 'moment';
+import { formatDate } from '../utils/date';
+import { useTypedSelector } from '../hooks/useTypedSelector';
 
-type FieldType = {
-	description?: string;
-	date?: Date;
+interface EventFormProps {
+	guests: IUser[];
+	submit: (event: IEvent) => void
 }
 
-const EventForm: FC = () => {
+const EventForm: FC<EventFormProps> = (props) => {
+	const [event, setEvent] = useState<IEvent>({
+		author: '',
+		date: '',
+		description: '',
+		guest: ''
+	} as IEvent);
+	const { user } = useTypedSelector(state => state.auth)
+
+	const selectDate = (date: Moment | null) => {
+		if (date) {
+			setEvent({ ...event, date: formatDate(date.toDate()) })
+		}
+	}
+
+	const submitForm = () => {
+		props.submit({ ...event, author: user.username })
+	}
 
 	return (
 		<Form
-			name="basic"
 			labelCol={{ span: 8 }}
 			wrapperCol={{ span: 16 }}
 			style={{ maxWidth: 600 }}
 			autoComplete="off"
+			onFinish={submitForm}
 		>
-			<Form.Item<FieldType>
+			<Form.Item
 				label="Event description"
 				name="description"
 				rules={[rules.required()]}
 			>
-				<Input />
+				<Input
+					onChange={e => setEvent({ ...event, description: e.target.value })}
+					value={event.description}
+				/>
 			</Form.Item>
-			<Form.Item<FieldType>
+			<Form.Item
 				label="Event date"
-				name={"date"}
+				name="date"
+				rules={[rules.required(), rules.isDateAfter("You can't create event in past")]}
+			>
+				<DatePicker
+					onChange={date => selectDate(date)}
+				/>
+			</Form.Item>
+			<Form.Item
+				label="Choose guest"
+				name="guest"
 				rules={[rules.required()]}
 			>
-				<Space direction="vertical">
-					<DatePicker />
-				</Space>
+				<Select
+					onChange={(guest: string) => setEvent({ ...event, guest })}
+					style={{ width: 120 }}
+				>
+					{props.guests.map(guest =>
+						<Select.Option key={guest.username} value={guest.username}>
+							{guest.username}
+						</Select.Option>
+					)}
+				</Select>
 			</Form.Item>
 			<Form.Item wrapperCol={{ offset: 8, span: 16 }}>
-				<Button type="ghost" htmlType="submit" >
+				<Button type="primary" htmlType="submit" >
 					Create
 				</Button>
-				<Select
-					defaultValue="lucy"
-					style={{ width: 120, marginLeft: 15 }}
-					options={[
-						{ value: 'jack', label: 'Jack' },
-						{ value: 'lucy', label: 'Lucy' },
-						{ value: 'Yiminghe', label: 'yiminghe' },
-						{ value: 'disabled', label: 'Disabled', disabled: true },
-					]}
-				/>
 			</Form.Item>
 		</Form>
 	)
