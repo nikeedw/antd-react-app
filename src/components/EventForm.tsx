@@ -5,9 +5,11 @@ import { IUser } from '../models/IUser';
 import { IEvent } from '../models/IEvent';
 import { Moment } from 'moment';
 import { formatDate } from '../utils/date';
+import { useTypedSelector } from '../hooks/useTypedSelector';
 
 interface EventFormProps {
 	guests: IUser[];
+	submit: (event: IEvent) => void
 }
 
 const EventForm: FC<EventFormProps> = (props) => {
@@ -17,29 +19,34 @@ const EventForm: FC<EventFormProps> = (props) => {
 		description: '',
 		guest: ''
 	} as IEvent);
+	const { user } = useTypedSelector(state => state.auth)
 
 	const selectDate = (date: Moment | null) => {
 		if (date) {
-			setEvent({...event, date: formatDate(date?.toDate())});
+			setEvent({ ...event, date: formatDate(date.toDate()) })
 		}
+	}
+
+	const submitForm = () => {
+		props.submit({...event, author: user.username})
 	}
 
 	return (
 		<Form
-			name="basic"
 			labelCol={{ span: 8 }}
 			wrapperCol={{ span: 16 }}
 			style={{ maxWidth: 600 }}
 			autoComplete="off"
+			onFinish={submitForm}
 		>
 			<Form.Item
 				label="Event description"
 				name="description"
 				rules={[rules.required()]}
 			>
-				<Input 
+				<Input
+					onChange={e => setEvent({ ...event, description: e.target.value })}
 					value={event.description}
-					onChange={e => setEvent({...event, description: e.target.value})}
 				/>
 			</Form.Item>
 			<Form.Item
@@ -48,18 +55,18 @@ const EventForm: FC<EventFormProps> = (props) => {
 				rules={[rules.required()]}
 			>
 				<Space direction="vertical">
-					<DatePicker 
+					<DatePicker
 						onChange={date => selectDate(date)}
 					/>
 				</Space>
 			</Form.Item>
-			<Form.Item 
+			<Form.Item
 				label="Choose guest"
 				name="guest"
 				rules={[rules.required()]}
 			>
 				<Select
-					onChange={(guest: string) => setEvent({...event, guest})}
+					onChange={(guest: string) => setEvent({ ...event, guest })}
 					style={{ width: 120 }}
 				>
 					{props.guests.map(guest =>
@@ -70,7 +77,7 @@ const EventForm: FC<EventFormProps> = (props) => {
 				</Select>
 			</Form.Item>
 			<Form.Item wrapperCol={{ offset: 8, span: 16 }}>
-				<Button type="ghost" htmlType="submit" >
+				<Button type="primary" htmlType="submit" >
 					Create
 				</Button>
 			</Form.Item>

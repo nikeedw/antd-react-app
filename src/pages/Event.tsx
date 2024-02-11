@@ -7,28 +7,21 @@ import { useTypedSelector } from '../hooks/useTypedSelector';
 
 const Event: FC = () => {
 	const [isModalOpen, setIsModalOpen] = useState(false);
-	const { fetchGuests } = useActions()
-	const { guests } = useTypedSelector(state => state.event);
+	const { fetchGuests, createEvent } = useActions()
+	const { guests, events } = useTypedSelector(state => state.event);
 
 	useEffect(() => {
 		fetchGuests();
 	}, [])
 
-  const showModal = () => {
-    setIsModalOpen(true);
-  };
-
-  const handleCancel = () => {
-    setIsModalOpen(false);
-  };
-
 	return (
 		<Layout>
-			<EventCalendar events={[]} />
+			{JSON.stringify(events)}
+			<EventCalendar events={events} />
 			<Row justify="center">
 				<Button
 					type="primary" 
-					onClick={showModal}
+					onClick={() => setIsModalOpen(true)}
 				>
 					Add event
 				</Button>
@@ -36,11 +29,12 @@ const Event: FC = () => {
 			<Modal 
 				title="Add event" 
 				visible={isModalOpen} 
-				onCancel={handleCancel}
+				onCancel={() => setIsModalOpen(false)}
 				footer={null}
 			>
 				<EventForm 
 					guests={guests}
+					submit={event => createEvent(event)}
 				/>
       </Modal>
 		</Layout>
