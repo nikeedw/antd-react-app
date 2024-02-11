@@ -1,5 +1,5 @@
 import { FC } from 'react'
-import { Badge, Calendar } from 'antd'
+import { Calendar } from 'antd'
 import { IEvent } from '../models/IEvent'
 import { Moment } from 'moment';
 import { formatDate } from '../utils/date';
