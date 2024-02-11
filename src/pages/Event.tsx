@@ -4,15 +4,23 @@ import { Row, Layout, Button, Modal } from 'antd'
 import EventForm from '../components/EventForm';
 import { useActions } from '../hooks/useActions';
 import { useTypedSelector } from '../hooks/useTypedSelector';
+import { IEvent } from '../models/IEvent';
 
 const Event: FC = () => {
 	const [isModalOpen, setIsModalOpen] = useState(false);
-	const { fetchGuests, createEvent } = useActions()
+	const { fetchGuests, createEvent, fetchEvents } = useActions()
 	const { guests, events } = useTypedSelector(state => state.event);
+	const { user } = useTypedSelector(state => state.auth)
 
 	useEffect(() => {
 		fetchGuests();
+		fetchEvents(user.username);
 	}, [])
+
+	const addNewEvent = (event: IEvent) => {
+		setIsModalOpen(false);
+		createEvent(event);
+	}
 
 	return (
 		<Layout>
@@ -20,23 +28,23 @@ const Event: FC = () => {
 			<EventCalendar events={events} />
 			<Row justify="center">
 				<Button
-					type="primary" 
+					type="primary"
 					onClick={() => setIsModalOpen(true)}
 				>
 					Add event
 				</Button>
 			</Row>
-			<Modal 
-				title="Add event" 
-				visible={isModalOpen} 
+			<Modal
+				title="Add event"
+				visible={isModalOpen}
 				onCancel={() => setIsModalOpen(false)}
 				footer={null}
 			>
-				<EventForm 
+				<EventForm
 					guests={guests}
-					submit={event => createEvent(event)}
+					submit={addNewEvent}
 				/>
-      </Modal>
+			</Modal>
 		</Layout>
 	)
 }

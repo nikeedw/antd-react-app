@@ -1,5 +1,5 @@
 import { FC, useState } from 'react'
-import { Form, Input, Space, DatePicker, Button, Select } from 'antd';
+import { Form, Input, DatePicker, Button, Select } from 'antd';
 import { rules } from '../utils/rules';
 import { IUser } from '../models/IUser';
 import { IEvent } from '../models/IEvent';
@@ -28,7 +28,7 @@ const EventForm: FC<EventFormProps> = (props) => {
 	}
 
 	const submitForm = () => {
-		props.submit({...event, author: user.username})
+		props.submit({ ...event, author: user.username })
 	}
 
 	return (
@@ -54,11 +54,9 @@ const EventForm: FC<EventFormProps> = (props) => {
 				name="date"
 				rules={[rules.required()]}
 			>
-				<Space direction="vertical">
-					<DatePicker
-						onChange={date => selectDate(date)}
-					/>
-				</Space>
+				<DatePicker
+					onChange={date => selectDate(date)}
+				/>
 			</Form.Item>
 			<Form.Item
 				label="Choose guest"
