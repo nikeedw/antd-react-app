@@ -3,6 +3,8 @@ import { Form, Input, Space, DatePicker, Button, Select } from 'antd';
 import { rules } from '../utils/rules';
 import { IUser } from '../models/IUser';
 import { IEvent } from '../models/IEvent';
+import { Moment } from 'moment';
+import { formatDate } from '../utils/date';
 
 interface EventFormProps {
 	guests: IUser[];
@@ -15,6 +17,12 @@ const EventForm: FC<EventFormProps> = (props) => {
 		description: '',
 		guest: ''
 	} as IEvent);
+
+	const selectDate = (date: Moment | null) => {
+		if (date) {
+			setEvent({...event, date: formatDate(date?.toDate())});
+		}
+	}
 
 	return (
 		<Form
@@ -29,7 +37,10 @@ const EventForm: FC<EventFormProps> = (props) => {
 				name="description"
 				rules={[rules.required()]}
 			>
-				<Input />
+				<Input 
+					value={event.description}
+					onChange={e => setEvent({...event, description: e.target.value})}
+				/>
 			</Form.Item>
 			<Form.Item
 				label="Event date"
@@ -37,7 +48,9 @@ const EventForm: FC<EventFormProps> = (props) => {
 				rules={[rules.required()]}
 			>
 				<Space direction="vertical">
-					<DatePicker />
+					<DatePicker 
+						onChange={date => selectDate(date)}
+					/>
 				</Space>
 			</Form.Item>
 			<Form.Item 
