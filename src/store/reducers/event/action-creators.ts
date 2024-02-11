@@ -1,8 +1,8 @@
-import axios from "axios";
 import { AppDispatch } from "../..";
 import { IEvent } from "../../../models/IEvent";
 import { IUser } from "../../../models/IUser";
 import { EventActionEnum, SetEventsAction, SetGuestsAction } from "./types";
+import UserService from "../../../api/UserService"
 
 export const EventActionCreators = {
 	setGuests: (payload: IUser[]): SetGuestsAction => ({
@@ -15,7 +15,8 @@ export const EventActionCreators = {
 	}),
 	fetchGuests: () => async (dispatch: AppDispatch) => {
 		try {
-			const guests = await axios.get<IUser[]>('./users.json')
+			const response = await UserService.getUsers();
+			dispatch(EventActionCreators.setGuests(response.data));
 		} catch(e) {
 			console.log(e);
 		}
