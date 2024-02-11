@@ -1,5 +1,5 @@
 import { FC } from 'react'
-import { Form, Input, Space, DatePicker, Button, Select, Row } from 'antd';
+import { Form, Input, Space, DatePicker, Button, Select } from 'antd';
 import { rules } from '../utils/rules';
 
 type FieldType = {
