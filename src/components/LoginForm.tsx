@@ -1,9 +1,8 @@
 import { Button, Checkbox, Form, Input } from 'antd';
 import { FC, useState } from 'react'
 import { rules } from '../utils/rules';
-import { useDispatch } from 'react-redux';
-import { AuthActionCreators } from '../store/reducers/auth/action-creators';
 import { useTypedSelector } from '../hooks/useTypedSelector';
+import { useActions } from '../hooks/useActions';
 
 type FieldType = {
 	username?: string;
@@ -12,13 +11,13 @@ type FieldType = {
 };
 
 const LoginForm: FC = () => {
-	const dispatch = useDispatch();
 	const {error, isLoading} = useTypedSelector(state => state.auth)
 	const [username, setUsername] = useState<string>('');
 	const [password, setPassword] = useState<string>('');
+	const { login } = useActions();
 
 	const onFinish = () => {
-		dispatch(AuthActionCreators.login(username, password));
+		login(username, password);
 	};
 	
 	const onFinishFailed = () => {
